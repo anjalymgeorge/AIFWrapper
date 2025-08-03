@@ -1,0 +1,88 @@
+_schema-version: "3.2"
+ID: aifwrapper
+version: 1.0.0
+modules:
+  - name: aifwrapper-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: aifwrapper-destination-service
+        parameters:
+          content-target: true
+      - name: aifwrapper_html_repo_host
+        parameters:
+          service-key:
+            name: aifwrapper_html_repo_host-key
+      - name: aifwarapper-xsuaa-service
+        parameters:
+          service-key:
+            name: uaa_aifwrapper-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: aifwrapper_aifwrapper_html_repo_host
+              ServiceInstanceName: aifwrapper-html5-app-host-service
+              ServiceKeyName: aifwrapper_html_repo_host-key
+              sap.cloud.service: aifwrapper
+            - Authentication: OAuth2UserTokenExchange
+              Name: aifwrapper-xsuaa
+              ServiceInstanceName: aifwrapper-xsuaa-service
+              ServiceKeyName: uaa_aifwrapper-key
+              sap.cloud.service: aifwrapper
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
+  - name: aifwrapper-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: aifwarapper-xsuaa-service
+      - name: aifwrapper-db
+
+  - name: aifwrapper-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: aifwrapper-db
+resources:
+  - name: aifwrapper-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+      service: destination
+      service-name: aifwrapper-destination-service
+      service-plan: lite
+  - name: aifwrapper_html_repo_host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: aifwrapper-html5-app-host-service
+      service-plan: app-host
+  - name: aifwarapper-xsuaa-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: aifwrapper-xsuaa-service
+      service-plan: application
+      config:
+        xsappname: aifwrapper-${org}-${space}
+        tenant-mode: dedicated
+  - name: aifwrapper-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+description: "AIF wrapper cap application"
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production

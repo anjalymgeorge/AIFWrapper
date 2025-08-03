@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "paths": {
+      "#cds-models/*": [
+        "./@cds-models/*"
+      ]
+    }
+  }
+}

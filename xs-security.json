@@ -1,0 +1,34 @@
+{
+  "xsappname": "aifwrapper",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of AIF Wrapper application",
+  "scopes": [
+    {
+      "name": "uaa.user",
+      "description": "UAA"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Admin user with Admin privilages."
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA",
+      "scope-references": [
+        "uaa.user"
+      ]
+    },
+    {
+      "name": "aifwrapper-admin",
+      "description": "Admin role for AIFWrapper applicaiton",
+      "scope-references": [
+        "uaa.user",
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ],
+  "attributes": [],
+  "authorities-inheritance": false
+}
