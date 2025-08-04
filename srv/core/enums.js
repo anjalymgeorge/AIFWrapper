@@ -103,10 +103,25 @@ const AUTHTYPE = {
 };
 
 
+/**
+ * Available workflow statues for SBPA.
+ * @readonly
+ * @enum {String}
+ */
+const WORKFLOWSTATUS = {
+    Running: "RUNNING",
+    Erroneous: "ERRONEOUS",
+    Suspended: "SUSPENDED",
+    Canceled: "CANCELED",
+    Completed: "COMPLETED",
+}
+
+
 module.exports = {
     HTTP_METHODS,
     HTTP_STATUS,
     PROTOCOL,
     PROXYTYPE,
-    AUTHTYPE
+    AUTHTYPE,
+    WORKFLOWSTATUS
 }
