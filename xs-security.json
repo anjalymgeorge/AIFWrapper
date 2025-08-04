@@ -10,6 +10,14 @@
     {
       "name": "$XSAPPNAME.Admin",
       "description": "Admin user with Admin privilages."
+    },
+    {
+      "name": "$XSAPPNAME.App-Admin",
+      "description": "App-Admin"
+    },
+    {
+      "name": "$XSAPPNAME.Firefighter",
+      "description": "Firefighter"
     }
   ],
   "role-templates": [

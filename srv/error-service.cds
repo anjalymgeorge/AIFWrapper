@@ -17,7 +17,7 @@ service Applicaiton {
             'Firefighter'
         ]
     }])
-    function logs()          returns Response;
+    function logs()             returns Response;
 
     @(restrict: [{
         grant: '*',
@@ -26,20 +26,42 @@ service Applicaiton {
             'Firefighter'
         ]
     }])
-    function health()          returns Response;
-
-
-}
-
-service Configuratior {
-
-    action triggerWorkflow() returns Response;
+    function health()           returns Response;
 
 
 }
 
 
-service GRDCErrorWorkflow {
+service WorkflowService {
+
+    type workflowErrorDetails {
+        wfInstanceId        : String;
+        errCatGroup         : String;
+        errCategory         : String;
+        logicalSystemid     : String(4);
+        targetCompanyCode   : String(10);
+        messageNumber       : Integer;
+        responsibleTeam     : String;
+        responsibleTeamName : String;
+        status              : String;
+        interfaceName       : String;
+        messageClass        : String;
+        transactionId       : String;
+        messageText         : String;
+    }
+
+
+    function erroneousFlows() returns array of workflowErrorDetails;
+}
+
+service Configuration {
+
+    action triggerWorkflow()    returns Response;
+
+}
+
+
+service GRDCErrorWorkflowService {
 
 
 }

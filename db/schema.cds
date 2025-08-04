@@ -7,9 +7,22 @@ using {
 } from '@sap/cds/common';
 
 
-entity rolematrix : cuid, managed {}
+entity rolematrix : cuid, managed {
+    category        : String(30);
+    categoryGroup   : String(30);
+    errorClass      : String(30);
+    errorNumber     : Integer;
+    errorMessageV1  : String(30);
+    errorMessageV2  : String(30);
+    errorMessageV3  : String(30);
+    errorMessageV4  : String(30);
+    responsibleTeam : String(30);
+}
 
-entity workflowid : cuid, managed {}
+entity workflowid : cuid, managed {
+    workflowInstance: String(64);
+    workflowId: Integer64;
+}
 
 /**
  * Source system details table.

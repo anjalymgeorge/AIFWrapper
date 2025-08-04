@@ -1,0 +1,12 @@
+@server=http://localhost:4004
+@username=alice
+@password=
+
+
+### triggerWorkflow
+# @name triggerWorkflow_POST
+POST {{server}}/odata/v4/configuration/triggerWorkflow
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{}

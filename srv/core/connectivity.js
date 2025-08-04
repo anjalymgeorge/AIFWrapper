@@ -1,5 +1,3 @@
-import { keysOf } from "@sap/cds/libx/odata/utils";
-
 const assert = require("node:assert");
 
 const { executeHttpRequest } = require("@sap-cloud-sdk/http-client");
@@ -32,14 +30,15 @@ const { HTTP_METHODS } = require('./enums');
  */
 class Connectivity {
 
-    constructor() {
-        assert(this.destination, new Error("Use Connectivity.for(#destinationName) for creating a connectivity service for the destination that is needs to serve for."));
+    constructor(destination) {
+        this.destinationName = destination;
         /** 
          * Using object to store information that will be used later for processing. 
          * @prop {object} _._vcap_services the current vcap services object for the application.
          */
         this._ = {}
         this._._vcap_services = JSON.parse(process.env.VCAP_SERVICES);
+        this.middlewares = [];
     }
 
     get vcap_services() {
@@ -52,8 +51,7 @@ class Connectivity {
      * @returns {Connectivity} An connectivity instance for the destination.
      */
     static for(destination) {
-        this.destinationName = destination;
-        return new Connectivity();
+        return new Connectivity(destination);
     }
 
     /**
@@ -63,6 +61,14 @@ class Connectivity {
      */
     registerClientRequest(req) {
         this._._req = req;
+        return this;
+    }
+
+    /**
+     * Sets the user token from the registered client request.
+     */
+    setUserTokenFromRequest() {
+        this.USER_TOKEN = this._._req._.req?.authInfo?.getTokenInfo()?.getTokenValue();
         return this;
     }
 
@@ -97,9 +103,10 @@ class Connectivity {
             const _headers = options?.headers ?? {};
 
 
+
             // destination config to be passed to the http client.
             const destinationConfig = {
-                destinationName: this.destination_name,
+                destinationName: this.destinationName,
             };
 
             //A middle ware to modify the current request config. add to middlewares if only path is defined.
@@ -127,13 +134,13 @@ class Connectivity {
                 // adding connection header to improve repeated requests performance to same URL's/API's.
                 _headers.Connection = "keep-alive";
 
-                const res = await executeHttpRequest(destinationConfig, { method: method, data: data, headers: _headers, middleware: this.middlewares }, { fetchCsrfToken: options?.needsxcsrfToken ?? true });
+                const res = await executeHttpRequest(destinationConfig, { method: method, data: data, headers: _headers, middleware: this.middlewares }, { fetchCsrfToken: options?.needsxcsrfToken ?? false });
                 response.status = res.status;
                 response.body = res.data;
                 response.headers = res.headers;
 
             } catch (err) {
-                console.error(`[ERROR] Error while requesting data from Connection ${this.destination_name}: ${err.message}.`);
+                console.error(`[ERROR] Error while requesting data from Connection ${this.destinationName}: ${err.message}.`);
                 // throws error if status is not found the the error object.
                 if (!err.response?.status) {
                     throw new Error(`[ERROR] Unable to complete HTTP request`, err);
@@ -145,12 +152,11 @@ class Connectivity {
             }
             return response;
         } catch (err) {
-            console.error(`[ERROR] Error while requesting data from Connection ${this.destination_name}: ${err.message}.`);
+            console.error(`[ERROR] Error while requesting data from Connection ${this.destinationName}: ${err.message}.`);
             throw err;
         }
     }
 }
-
 
 
 module.exports = { Connectivity }

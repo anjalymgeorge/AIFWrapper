@@ -21,11 +21,14 @@
     "@cap-js/cds-typer": ">=0.1",
     "@cap-js/cds-types": "^0.13.0",
     "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9.2.0",
     "@sap/eslint-plugin-cds": "^4",
     "eslint": "^9"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "build": "mbt build -t gen --mtar mta.tar",
+    "deploy": "npm run build && cf deploy gen/mta.tar"
   },
   "cds": {
     "requires": {
