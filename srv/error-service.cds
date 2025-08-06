@@ -17,7 +17,7 @@ service Applicaiton {
             'Firefighter'
         ]
     }])
-    function logs()             returns Response;
+    function logs()          returns Response;
 
     @(restrict: [{
         grant: '*',
@@ -26,7 +26,7 @@ service Applicaiton {
             'Firefighter'
         ]
     }])
-    function health()           returns Response;
+    function health()        returns Response;
 
 
 }
@@ -35,12 +35,11 @@ service Applicaiton {
 service WorkflowService {
 
     type workflowErrorDetails {
-        wfInstanceId        : String;
         errCatGroup         : String;
-        errCategory         : String;
-        logicalSystemid     : String(4);
-        targetCompanyCode   : String(10);
-        messageNumber       : Integer;
+        errCat              : String;
+        logicalSystemid     : String;
+        targetCompanyCode   : String;
+        messageNumber       : String;
         responsibleTeam     : String;
         responsibleTeamName : String;
         status              : String;
@@ -48,15 +47,25 @@ service WorkflowService {
         messageClass        : String;
         transactionId       : String;
         messageText         : String;
+        MsgNumber           : String(10);
+        msgGuid             : String;
+        interfaceVer        : String(10);
+        numberOfErrors      : Integer;
+        numberOfWarnings    : Integer;
+        numberOfSuccess     : Integer;
+        lastUser            : String;
+        lastDate            : DateTime;
+        createUser          : String;
+        createDate          : DateTime;
     }
 
 
-    function erroneousFlows() returns array of workflowErrorDetails;
+    function tasks()         returns array of workflowErrorDetails;
 }
 
 service Configuration {
 
-    action triggerWorkflow()    returns Response;
+    action triggerWorkflow() returns Response;
 
 }
 

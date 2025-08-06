@@ -26,8 +26,15 @@ const { HTTP_METHODS } = require('./enums');
  */
 
 /**
- * 
+ * Additional Options for the request.
+ * @typedef REQUESTOPTIONS
+ * @prop {Object.<string, any} headers Any additional headers excluding `Autoraization`, `x-csrf-token`, `Cookie` must be added here as a key-value pair.
+ * @prop {Array.<String>|Null} includeHeaders additional details name from destiation that needs to be included as headers in the request.
+ * @prop {boolean | null} needsxcsrfToken Flag if the request needs an x-csrf-token header to be added.
+ * @prop {String|null} xcsrfTokenPath URL to be used when generating the xcsrf token.
+ * @prop {CACHEOPTIONS} cacheOptions - Cache options for the current request, for this cache prop must be true.
  */
+
 class Connectivity {
 
     constructor(destination) {
