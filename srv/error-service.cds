@@ -17,7 +17,7 @@ service Applicaiton {
             'Firefighter'
         ]
     }])
-    function logs()          returns Response;
+    function logs()            returns Response;
 
     @(restrict: [{
         grant: '*',
@@ -26,7 +26,7 @@ service Applicaiton {
             'Firefighter'
         ]
     }])
-    function health()        returns Response;
+    function health()          returns Response;
 
 
 }
@@ -60,12 +60,9 @@ service WorkflowService {
     }
 
 
-    function tasks()         returns array of workflowErrorDetails;
-}
+    function tasks()           returns array of workflowErrorDetails;
 
-service Configuration {
-
-    action triggerWorkflow() returns Response;
+    action   triggerWorkflow() returns Response;
 
 }
 

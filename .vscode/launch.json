@@ -21,8 +21,8 @@
       "request": "attach",
       "name": "Attach Remote",
       "port": 9229,
-      "localRoot": "${workspaceFolder}",
-      "remoteRoot": "/home/vcap/app"
+      "localRoot": "${workspaceFolder}/",
+      "remoteRoot": "/home/vcap/app/"
     }
   ]
 }

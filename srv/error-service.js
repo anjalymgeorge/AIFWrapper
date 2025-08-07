@@ -5,9 +5,6 @@ const { Handlers } = require('./handlers');
 class ConfigurationService extends cds.ApplicationService {
 
     init() {
-
-        this.on('triggerWorkflow', Handlers.triggerWorkflowHandler);
-
         return super.init();
     }
 
@@ -15,9 +12,11 @@ class ConfigurationService extends cds.ApplicationService {
 
 class WorkflowService extends cds.ApplicationService {
     init() {
-        this.on('erroneousFlows', async (req, res, next) => {
+        this.on('tasks', async (req, next) => {
             return [];
         })
+
+        this.on('triggerWorkflow', async (req, next) => await Handlers.triggerWorkflowHandler(req, next));
         return super.init();
     }
 }

@@ -37,8 +37,8 @@ const { HTTP_METHODS } = require('./enums');
 
 class Connectivity {
 
-    constructor(destination) {
-        this.destinationName = destination;
+    #destinationName = "";
+    constructor() {
         /** 
          * Using object to store information that will be used later for processing. 
          * @prop {object} _._vcap_services the current vcap services object for the application.
@@ -48,17 +48,35 @@ class Connectivity {
         this.middlewares = [];
     }
 
+    /**
+     * The destination name that needs to be used for using the connectivity service.
+     */
+    set destination(destinationName) {
+        this.#destinationName = destinationName;
+    }
+
+    /**
+     * The current destination set for the request.
+     */
+    get destination() {
+        return this.#destinationName;
+    }
+
+
+
     get vcap_services() {
         return this._._vcap_services;
     }
 
     /**
-     * 
+     * Creates an connectivity service object for the destination specified.
      * @param {String} destination The destination for which the connectivity service needs to be intialised.
      * @returns {Connectivity} An connectivity instance for the destination.
      */
     static for(destination) {
-        return new Connectivity(destination);
+        const conn = new Connectivity();
+        conn.destination = destination;
+        return conn;
     }
 
     /**
@@ -84,6 +102,7 @@ class Connectivity {
      * @returns {Promise<DESTINATION| undefined>}
      */
     async getDestinationConfiguration() {
+        assert(this.#destinationName !== "", `Use Connectivty.for() to specify the destination name or set the destinaiton name.`)
         if (!this?._?._destinationConfig) {
             this._._destinationConfig = await getDestination({ destinationName: this.destinationName });
         }
@@ -98,13 +117,13 @@ class Connectivity {
   * @param {String} method - The HTTP method for the request.
   * @param {Object} data - The data that needs to be sent as payload in JSON format.
   * @param {REQUESTOPTIONS} [options=null] - The options to be included with the request.
-  * @returns {Promise.<{status: number, body: any, headers: any}>} - A promise that resolves to an object containing the HTTP response status, body, and headers.
-  * @throws {SapServiceException} - Throws an error if the request fails.
+  * @returns {Promise.<{status: number,status_message: string|undefined, body: any, headers: any}>} - A promise that resolves to an object containing the HTTP response status, body, and headers.
+  * @throws {Error} - Throws an error if the request fails.
   */
     async request(path, method = "", data, options = null) {
         try {
             assert(Object.values(HTTP_METHODS).includes(method), new Error(`[ERROR] Method must be one of standard http methods - ${Object.values(HTTP_METHODS).join(',')}`));
-            console.info(`[INFO] Doing a ${method} request: ` + this.destinationName + ".dest" + path);
+            console.info(`[INFO] Doing a ${method} request: ` + this.#destinationName + ".dest" + path);
 
             const response = {};
             const _headers = options?.headers ?? {};
@@ -113,7 +132,7 @@ class Connectivity {
 
             // destination config to be passed to the http client.
             const destinationConfig = {
-                destinationName: this.destinationName,
+                destinationName: this.#destinationName,
             };
 
             //A middle ware to modify the current request config. add to middlewares if only path is defined.
