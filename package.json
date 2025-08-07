@@ -36,12 +36,13 @@
     "tests": "jest --config jest.config.js",
     "watch-app": "cds watch --open app/webapp/index.html?sap-ui-xx-viewCache=false",
     "undeploy": "cf undeploy aifwrapper --delete-services --delete-service-keys --delete-service-brokers",
-    "watch-admin": "cds watch --open admin/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-admin": "cds watch --open admin/webapp/index.html?sap-ui-xx-viewCache=false",
+    "connect-2-ssh:linux":"chmod +x .scripts/connect-ssh.sh && .scripts/connect-ssh.sh --app aifwrapper-srv"
   },
   "cds": {
     "requires": {
       "[production]": {
-        "auth": "xsuaa"
+        "auth": "dummy"
       }
     }
   },
