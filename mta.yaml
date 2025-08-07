@@ -65,9 +65,23 @@ modules:
       - aifwrapperappadmin.zip
       name: aifwrapperappadmin
       target-path: resources/
+    - artifacts:
+      - aifwrapperappdashboarddashboard.zip
+      name: aifwrapperappdashboarddashboard
+      target-path: resources/
 - name: aifwrapperappadmin
   type: html5
   path: app/admin
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: aifwrapperappdashboarddashboard
+  type: html5
+  path: app/dashboard
   build-parameters:
     build-result: dist
     builder: custom
@@ -94,6 +108,13 @@ resources:
             ProxyType: Internet
             Type: HTTP
             URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: aifwrapper-srv
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
           existing_destinations_policy: update
       version: 1.0.0
     service: destination

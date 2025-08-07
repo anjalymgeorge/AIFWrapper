@@ -31,13 +31,14 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "build": "rimraf resources gen && mbt build -t gen --mtar mta.tar",
-    "deploy": "npm run build && cf deploy gen/mta.tar --retries 1",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
     "tests": "jest --config jest.config.js",
     "watch-app": "cds watch --open app/webapp/index.html?sap-ui-xx-viewCache=false",
     "undeploy": "cf undeploy aifwrapper --delete-services --delete-service-keys --delete-service-brokers",
     "watch-admin": "cds watch --open admin/webapp/index.html?sap-ui-xx-viewCache=false",
-    "connect-2-ssh:linux":"chmod +x .scripts/connect-ssh.sh && .scripts/connect-ssh.sh --app aifwrapper-srv"
+    "connect-2-ssh:linux": "chmod +x .scripts/connect-ssh.sh && .scripts/connect-ssh.sh --app aifwrapper-srv",
+    "watch-dashboard": "cds watch --open dashboard/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "requires": {
