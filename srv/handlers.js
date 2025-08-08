@@ -1,8 +1,8 @@
-const { Util } = require('./utils/common');
-
+const { EnvironmentConfig } = require('./core/config');
 const { HTTP_METHODS, HTTP_STATUS } = require('./core/enums');
 const { Connectivity } = require('./core/connectivity');
 
+const { Util } = require('./utils/common');
 
 class Handlers {
 
@@ -38,12 +38,12 @@ class Handlers {
 
     static async _createWorkflowTasks(req) {
         //TODO: add this to env variables.
-        const definationId = "eu10.btp-innovate-yjy2sr7n.cfinworlflow.cFINProcess";
+        const definationId = EnvironmentConfig.aifWorkflowDefinationId;
         const worflowExecutions = [];
         const errorsForTasksToBeCreated = await Handlers._getErrorsForPreviousHour(req) ?? [];
 
         //TODO: need to implement a check function that will check if an instance of wf is running for the current error
-        errorsForTasksToBeCreated.slice(0,2).forEach((data) => {
+        errorsForTasksToBeCreated.slice(0, 2).forEach((data) => {
             const context = {
                 "definitionId": definationId,
                 "context": {
