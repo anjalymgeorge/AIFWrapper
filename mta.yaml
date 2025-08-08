@@ -40,6 +40,8 @@ modules:
   - name: aifwarapper-xsuaa-service
   - name: aifwarapper-connectivity-service
   - name: aifwrapper-destination-service
+  properties:
+    AIF_WF_DEFINATION_ID: eu10.btp-innovate-yjy2sr7n.cfinworlflow.cFINProcess
   provides:
   - name: srv-api
     properties:
