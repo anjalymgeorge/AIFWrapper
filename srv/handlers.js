@@ -1,4 +1,4 @@
-const { EnvironmentConfig } = require('./core/config');
+const { EnvironmentConfig } = require('./config');
 const { HTTP_METHODS, HTTP_STATUS } = require('./core/enums');
 const { Connectivity } = require('./core/connectivity');
 
