@@ -16,72 +16,83 @@ class Handlers {
      * Triggers the workflow with the passed context.
      */
     static async _triggerWorkflow(context, req) {
-        const endpoint = "/v1/workflow-instances"
-        /**The workflow destinaiton name string. */
-        const workflowDestination = "ProcessAutomation"
+        try {
 
-        const wfConnectivity = Connectivity.for(workflowDestination);
-        wfConnectivity.registerClientRequest(req).setUserTokenFromRequest();
 
-        return new Promise(async (res, rej) => {
-            const response = await wfConnectivity.request(endpoint, HTTP_METHODS.POST, context);
+            const endpoint = "/v1/workflow-instances"
+            /**The workflow destinaiton name string. */
+            const workflowDestination = "ProcessAutomation"
 
-            if (response.status !== HTTP_STATUS.CREATED) {
-                rej(response);
-            }
+            const wfConnectivity = Connectivity.for(workflowDestination);
+            wfConnectivity.registerClientRequest(req).setUserTokenFromRequest();
 
-            res(response);
-        });
+            return new Promise(async (res, rej) => {
+                const response = await wfConnectivity.request(endpoint, HTTP_METHODS.POST, context);
+
+                if (response.status !== HTTP_STATUS.CREATED) {
+                    throw (response);
+                }
+
+                res(response);
+            });
+        } catch (error) {
+            console.error(`[ERROR] Unable to trigger workflow.`, error);
+            rej(error);
+        }
     }
 
     //TODO: move this to a sperate worflow handler module.
 
     static async _createWorkflowTasks(req) {
-        //TODO: add this to env variables.
-        const definationId = EnvironmentConfig.aifWorkflowDefinationId;
-        const worflowExecutions = [];
-        const errorsForTasksToBeCreated = await Handlers._getErrorsForPreviousHour(req) ?? [];
+        try {
+            //TODO: add this to env variables.
+            const definationId = EnvironmentConfig.aifWorkflowDefinationId;
+            const worflowExecutions = [];
+            const errorsForTasksToBeCreated = await Handlers._getErrorsForPreviousHour(req) ?? [];
 
-        //TODO: need to implement a check function that will check if an instance of wf is running for the current error
-        errorsForTasksToBeCreated.slice(0, 2).forEach((data) => {
-            const context = {
-                "definitionId": definationId,
-                "context": {
-                    "errordetails": {
-                        //NOTE: Hardcoded 
-                        "errCatGroup": "Mapping",
-                        "errCat": data?.ErrorCategory,
-                        //NOTE: SYS id is hardcoded  
-                        "logicalSystemid": "DGM",
-                        "targetCompanyCode": "",
-                        "messageNumber": data?.MsgNumber,
-                        "responsibleTeam": "",
-                        "responsibleTeamName": "",
-                        "status": "",
-                        "interfaceName": data?.InterfaceName,
-                        "messageClass": data?.MsgClass,
-                        "transactionId": "",
-                        "messageText": data?.FinalText,
-                        "MsgNumber": "",
-                        "msgGuid": data?.msgGuid,
-                        "interfaceVer": data?.InterfaceVer,
-                        "numberOfErrors": data?.NumberOfErrors,
-                        "numberOfWarnings": data?.NumberOfWarnings,
-                        "numberOfSuccess": data?.NumberOfSuccess,
-                        "lastUser": data?.LastUser,
-                        "lastDate": Util.getISODateStringFromOdataDate(data?.LastDate),
-                        "createUser": data?.CreateUser,
-                        "createDate": Util.getISODateStringFromOdataDate(data?.CreateDate)
+            //TODO: need to implement a check function that will check if an instance of wf is running for the current error
+            errorsForTasksToBeCreated.slice(0, 2).forEach((data) => {
+                const context = {
+                    "definitionId": definationId,
+                    "context": {
+                        "errordetails": {
+                            //NOTE: Hardcoded 
+                            "errCatGroup": "Mapping",
+                            "errCat": data?.ErrorCategory,
+                            //NOTE: SYS id is hardcoded  
+                            "logicalSystemid": "DGM",
+                            "targetCompanyCode": "",
+                            "messageNumber": data?.MsgNumber,
+                            "responsibleTeam": "",
+                            "responsibleTeamName": "",
+                            "status": "",
+                            "interfaceName": data?.InterfaceName,
+                            "messageClass": data?.MsgClass,
+                            "transactionId": "",
+                            "messageText": data?.FinalText,
+                            "MsgNumber": "",
+                            "msgGuid": data?.msgGuid,
+                            "interfaceVer": data?.InterfaceVer,
+                            "numberOfErrors": data?.NumberOfErrors,
+                            "numberOfWarnings": data?.NumberOfWarnings,
+                            "numberOfSuccess": data?.NumberOfSuccess,
+                            "lastUser": data?.LastUser,
+                            "lastDate": Util.getISODateStringFromOdataDate(data?.LastDate),
+                            "createUser": data?.CreateUser,
+                            "createDate": Util.getISODateStringFromOdataDate(data?.CreateDate)
+                        }
                     }
                 }
-            }
 
-            worflowExecutions.push(Handlers._triggerWorkflow(context, req));
-        });
+                worflowExecutions.push(Handlers._triggerWorkflow(context, req));
+            });
 
-        const executionResults = await Promise.allSettled(worflowExecutions);
+            const executionResults = await Promise.allSettled(worflowExecutions);
 
-        return executionResults;
+            return executionResults;
+        } catch (err) {
+            console.error(`[ERROR] Unable to create workflows tasks.`, err);
+        }
     }
 
     /**
