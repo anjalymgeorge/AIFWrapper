@@ -16,29 +16,28 @@ class Handlers {
      * Triggers the workflow with the passed context.
      */
     static async _triggerWorkflow(context, req) {
-        try {
+        const endpoint = "/public/workflow/rest/v1/workflow-instances"
+        /**The workflow destinaiton name string. */
+        const workflowDestination = "ProcessAutomation"
 
-
-            const endpoint = "/v1/workflow-instances"
-            /**The workflow destinaiton name string. */
-            const workflowDestination = "ProcessAutomation"
-
-            const wfConnectivity = Connectivity.for(workflowDestination);
-            wfConnectivity.registerClientRequest(req).setUserTokenFromRequest();
-
-            return new Promise(async (res, rej) => {
+        return new Promise(async (res, rej) => {
+            try {
+                const wfConnectivity = Connectivity.for(workflowDestination);
+                // wfConnectivity.registerClientRequest(req).setUserTokenFromRequest();
                 const response = await wfConnectivity.request(endpoint, HTTP_METHODS.POST, context);
 
+                // check status.
                 if (response.status !== HTTP_STATUS.CREATED) {
                     throw (response);
                 }
 
                 res(response);
-            });
-        } catch (error) {
-            console.error(`[ERROR] Unable to trigger workflow.`, error);
-            rej(error);
-        }
+            } catch (error) {
+                console.error(`[ERROR] Unable to trigger workflow.`, error);
+                rej(error);
+            }
+        });
+
     }
 
     //TODO: move this to a sperate worflow handler module.
