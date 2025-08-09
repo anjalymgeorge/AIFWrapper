@@ -166,7 +166,7 @@ class Connectivity {
                 response.headers = res.headers;
 
             } catch (err) {
-                console.error(`[ERROR] Error while requesting data from Connection ${this.destinationName}: ${err.message}.`);
+                console.error(`[ERROR] Error while requesting data from Connection ${this.destination}: ${err?.message}.`);
                 // throws error if status is not found the the error object.
                 if (!err.response?.status) {
                     throw new Error(`[ERROR] Unable to complete HTTP request`, err);
