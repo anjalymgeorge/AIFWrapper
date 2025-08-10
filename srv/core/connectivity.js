@@ -1,7 +1,7 @@
 const assert = require("node:assert");
 
 const { executeHttpRequest } = require("@sap-cloud-sdk/http-client");
-const { getDestination } = require("@sap-cloud-sdk/connectivity");
+const { getDestination, retrieveJwt } = require("@sap-cloud-sdk/connectivity");
 const { ErrorWithCause } = require("@sap-cloud-sdk/util");
 
 const { HTTP_METHODS } = require('./enums');
@@ -93,7 +93,10 @@ class Connectivity {
      * Sets the user token from the registered client request.
      */
     setUserTokenFromRequest() {
-        this.USER_TOKEN = this._._req._.req?.authInfo?.getTokenInfo()?.getTokenValue();
+        this.USER_TOKEN = retrieveJwt(this._._req);
+        if(!this.USER_TOKEN){
+            console.warn(`[WARNING] User token from current req cannot be set, since its not found!`);
+        }
         return this;
     }
 
@@ -104,7 +107,7 @@ class Connectivity {
     async getDestinationConfiguration() {
         assert(this.#destinationName !== "", `Use Connectivty.for() to specify the destination name or set the destinaiton name.`)
         if (!this?._?._destinationConfig) {
-            this._._destinationConfig = await getDestination({ destinationName: this.destinationName });
+            this._._destinationConfig = await getDestination({ destinationName: this.destination });
         }
         return this._._destinationConfig;
     }
