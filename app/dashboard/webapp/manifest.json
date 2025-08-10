@@ -1,7 +1,7 @@
 {
   "_version": "1.65.0",
   "sap.app": {
-    "id": "aifwrapper.app.dashboard.dashboard",
+    "id": "aifwrapper.app.dashboard",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -72,7 +72,7 @@
       "i18n": {
         "type": "sap.ui.model.resource.ResourceModel",
         "settings": {
-          "bundleName": "aifwrapper.app.dashboard.dashboard.i18n.i18n"
+          "bundleName": "aifwrapper.app.dashboard.i18n.i18n"
         }
       },
       "": {
@@ -100,9 +100,9 @@
         "transition": "slide",
         "type": "View",
         "viewType": "XML",
-        "path": "aifwrapper.app.dashboard.dashboard.view",
+        "path": "aifwrapper.app.dashboard.view",
         "async": true,
-        "viewPath": "aifwrapper.app.dashboard.dashboard.view"
+        "viewPath": "aifwrapper.app.dashboard.view"
       },
       "routes": [
         {
@@ -121,7 +121,7 @@
       }
     },
     "rootView": {
-      "viewName": "aifwrapper.app.dashboard.dashboard.view.App",
+      "viewName": "aifwrapper.app.dashboard.view.App",
       "type": "XML",
       "id": "App",
       "async": true

@@ -3,7 +3,7 @@ sap.ui.define([
 ], (Controller) => {
     "use strict";
 
-    return Controller.extend("aifwrapper.app.dashboard.dashboard.controller.View1", {
+    return Controller.extend("aifwrapper.app.dashboard.controller.View1", {
         onInit() {
         }
     });
