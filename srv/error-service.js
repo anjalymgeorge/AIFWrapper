@@ -13,7 +13,8 @@ class ConfigurationService extends cds.ApplicationService {
 class WorkflowService extends cds.ApplicationService {
     init() {
         this.on('tasks', async (req, next) => {
-            return [];
+            const tasks = await Handlers.getUserTasks(req, next);
+            return tasks;
         })
 
         this.on('triggerWorkflow', async (req, next) => await Handlers.triggerWorkflowHandler(req, next));
