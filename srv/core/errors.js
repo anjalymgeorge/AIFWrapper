@@ -109,4 +109,4 @@ class FailedOdataRequest extends ApplicationError {
 
 
 
-module.exports = { FailedRestRequest, FailedOdataRequest }
+module.exports = { ApplicationError, FailedRestRequest, FailedOdataRequest }
