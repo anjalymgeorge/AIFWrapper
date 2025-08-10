@@ -20,11 +20,11 @@ class ApplicationError extends Error {
      */
     #errorResponse = undefined;
     /**
-     * 
-     * @param {*} message 
-     * @param {*} status 
-     * @param {*} statusText 
-     * @param {*} cause 
+     * Base class for all other error classes
+     * @param {String} message - The error message.
+     * @param {Number} status - The HTTP status code.
+     * @param {String} statusText - The HTTP status code text.
+     * @param {String|undefined} cause - Additional message to support the error, or describing more about the error. 
      */
     constructor(message, status, statusText, cause) {
         super(message, { cause: cause });
@@ -36,7 +36,7 @@ class ApplicationError extends Error {
             status: status,
             code: statusText,
             message: message,
-            " @cause": cause
+            "@cause": cause
         }
 
     }
