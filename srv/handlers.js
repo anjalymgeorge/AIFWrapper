@@ -1,10 +1,80 @@
-const { EnvironmentConfig } = require('./config');
+"use-strict";
+const { FailedOdataRequest, ApplicationError, FailedRestRequest } = require('./core/errors');
 const { HTTP_METHODS, HTTP_STATUS } = require('./core/enums');
 const { Connectivity } = require('./core/connectivity');
 
 const { Util } = require('./utils/common');
 
+const { EnvironmentConfig } = require('./config');
+
+
 class Handlers {
+    /**
+     * Return the tasks assigned users.
+     */
+    static async getUserTasks(req, next) {
+        try {
+            const getTaskContextExecutions = [];
+
+            const definationId = EnvironmentConfig.aifWorkflowDefinationId;
+
+            const endpoint = "/public/workflow/odata/v1/tcm/TaskCollection";
+
+            const workflowDestination = "ProcessAutomationWithUserPropagation";
+
+            const wfConnectivityService = Connectivity.for(workflowDestination);
+
+            /**
+             * Gets context that was used to trigger the workflow and create this task instance
+             * @param {String} instanceId 
+             * @returns {{}} The start event context.
+             * @throws {FailedRestRequest} - If the HTTP request fails.
+             */
+            const _getInstanceContext = async function (instanceId) {
+                const endpoint = `/public/workflow/rest/v1/task-instances/${instanceId}/context`;
+                const response = await wfConnectivityService.request(endpoint, HTTP_METHODS.GET);
+                if (response.status !== HTTP_STATUS.OK) {
+                    throw new FailedRestRequest(response);
+                }
+                const data = response.body?.startEvent?.errordetails ?? {};
+                return data;
+            };
+
+            // configure connectivity service.
+            wfConnectivityService
+                // register req 
+                .registerClientRequest(req)
+                // set user token
+                .setUserTokenFromRequest();
+
+            const response = await wfConnectivityService.request(`${endpoint}`, HTTP_METHODS.GET);
+            // If the user has permissions
+            if (response.status !== HTTP_STATUS.OK) {
+                throw new FailedOdataRequest(response);
+            }
+
+            const taskCollections = response.body?.d?.results ?? [];
+            // get the task context for each instance id parallely.
+            taskCollections.map((taskcollection) => {
+                getTaskContextExecutions.push(_getInstanceContext(taskcollection.InstanceID));
+            });
+            const results = await Promise.allSettled(getTaskContextExecutions);
+
+            const userTasks = results.map((result) => result.value);
+            // create the response body for current request.
+            return userTasks;
+        } catch (err) {
+            console.error(`[ERROR] Unable to get user tasks.`, err);
+            if (err instanceof ApplicationError) {
+                return req.error(err.error_reponse);
+            }
+            return req.error(500, err.message);
+        }
+    }
+
+    static userTasksReponse(data) {
+        return [];
+    }
 
     static async triggerWorkflowHandler(req, next) {
 
@@ -18,7 +88,7 @@ class Handlers {
     static async _triggerWorkflow(context, req) {
         const endpoint = "/public/workflow/rest/v1/workflow-instances"
         /**The workflow destinaiton name string. */
-        const workflowDestination = "ProcessAutomation"
+        const workflowDestination = "ProcessAutomation";
 
         return new Promise(async (res, rej) => {
             try {
@@ -44,7 +114,6 @@ class Handlers {
 
     static async _createWorkflowTasks(req) {
         try {
-            //TODO: add this to env variables.
             const definationId = EnvironmentConfig.aifWorkflowDefinationId;
             const worflowExecutions = [];
             const errorsForTasksToBeCreated = await Handlers._getErrorsForPreviousHour(req) ?? [];
