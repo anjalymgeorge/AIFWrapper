@@ -6,7 +6,6 @@
  * @extends Error
  */
 class ApplicationError extends Error {
-
     #defaultErrorResponse = {
         //NOTE: not using HTTP_STATUS from enums, since it can create a circular import going forward.
         status: 500,
@@ -62,6 +61,10 @@ class ApplicationError extends Error {
 
 }
 
+
+//TODO: make a HTTPRequestClass that will be parent for this and rest, that will have switch cases for common http failed status.
+//TODO: add a flag if need to propagate the server error, i.e: since errors like 404 or 401 or 403 can be propagated back to client, but for other error eg:400, since our app has created the request incorrect, that should be sent as an internal server error instead, to avoid confusion.
+// Or we can add it payload eg @server_response and then show the original error or add it to @cause.
 /**
  * Error when an REST request fails with a  non-success HTTP status.
  */
