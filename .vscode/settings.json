@@ -6,5 +6,6 @@
     "csv (semicolon)",
     "tsv",
     "tab"
-  ]
+  ],
+  "SAP HANA Database Explorer.ShowXsAdvancedConnections": true
 }
