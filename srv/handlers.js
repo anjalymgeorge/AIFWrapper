@@ -1,4 +1,4 @@
-"use-strict";
+"use strict";
 const { FailedOdataRequest, ApplicationError, FailedRestRequest } = require('./core/errors');
 const { HTTP_METHODS, HTTP_STATUS } = require('./core/enums');
 const { Connectivity } = require('./core/connectivity');

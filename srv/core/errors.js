@@ -1,4 +1,4 @@
-"use-strict";
+"use strict";
 
 /**
  * Base class for all other error classes
