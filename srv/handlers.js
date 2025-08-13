@@ -119,7 +119,7 @@ class Handlers {
             const errorsForTasksToBeCreated = await Handlers._getErrorsForPreviousHour(req) ?? [];
 
             //TODO: need to implement a check function that will check if an instance of wf is running for the current error
-            errorsForTasksToBeCreated.slice(0, 2).forEach((data) => {
+            errorsForTasksToBeCreated.slice(0, 5).forEach((data) => {
                 const context = {
                     "definitionId": definationId,
                     "context": {
