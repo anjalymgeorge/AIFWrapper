@@ -42,6 +42,8 @@ modules:
   - name: aifwrapper-destination-service
   properties:
     AIF_WF_DEFINATION_ID: eu10.btp-innovate-yjy2sr7n.cfinworlflow.cFINProcess
+    WF_DESTINATION: ProcessAutomation
+    WF_DESTINATION_WITH_USR_PROP: ProcessAutomationWithUserPropagation
   provides:
   - name: srv-api
     properties:

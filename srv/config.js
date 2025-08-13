@@ -21,7 +21,21 @@ class EnvironmentConfig {
     static get aifWorkflowDefinationId() {
         return EnvironmentConfig.getEnvironentVariable('AIF_WF_DEFINATION_ID');
     }
+
+    static get aifWFDestination() {
+        return EnvironmentConfig.getEnvironentVariable('WF_DESTINATION');
+    }
+
+    static get aifWFDestinationWithUserPropagation() {
+        return EnvironmentConfig.getEnvironentVariable('WF_DESTINATION_WITH_USR_PROP');
+    }
 }
 
+/**
+ * 
+ */
+class ApplicaitonConfig {
+
+}
 
 module.exports = { EnvironmentConfig }
